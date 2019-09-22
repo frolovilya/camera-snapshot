@@ -1,6 +1,7 @@
 import subprocess as sp
-import os
 import time
+import tempfile
+from src import logger
 
 
 class Camera:
@@ -9,39 +10,39 @@ class Camera:
         self.uri = uri
 
     def __str__(self):
-        return self.name + " (" + self.uri + ")"
+        return "{'name': '" + self.name + "', 'uri': '" + self.uri + "'}"
 
     def __repr__(self):
         return self.__str__()
 
 
 class CameraSnapshot:
-    image_compression = 10
-    
-    def __init__(self, ffmpeg_bin, snapshots_dir):
+    def __init__(self, ffmpeg_bin, jpeg_compression=5):
         self.__ffmpeg_bin = ffmpeg_bin
-        self.__snapshots_dir = snapshots_dir
-        self.__create_folder_if_needed(snapshots_dir)
+        self.__jpeg_compression = jpeg_compression
 
-    def __create_folder_if_needed(self, folder_path):
-        if not os.path.exists(folder_path):
-            os.mkdir(folder_path)
-            print("Created folder", folder_path)
+    def take_video_snapshot(self, camera, snapshot_dir=tempfile.gettempdir()):
+        """
+        Take snapshot image from camera.
 
-    def __get_path(self, *path_elements):
-        return "/".join(list(filter(lambda x: x != "", path_elements)))
+        :param camera: Camera object
+        :param snapshot_dir: snapshot directory to save file to
+        :return: tuple: snapshot folder, snapshot file name
+        """
+        logger.log("Taking snapshot for camera '{}' with timestamp {}", camera.name, int(time.time()))
 
-    # take jpeg snapshot from camera
-    def take_video_snapshot(self, camera):
-        self.__create_folder_if_needed(self.__get_path(self.__snapshots_dir, camera.name))
+        file_name = camera.name + '_' + str(int(time.time())) + '.jpg'
+        file_path = snapshot_dir + "/" + file_name
 
-        print("Snapshot for camera", camera, "at", int(time.time()))
         ffmpeg_cmd = [self.__ffmpeg_bin,
                       '-i', camera.uri,
                       '-f', 'image2',
                       '-loglevel', 'error',
                       '-vframes', '1',
-                      '-strftime', '1',
-                      '-qscale:v', str(self.image_compression),
-                      self.__get_path(self.__snapshots_dir, camera.name, camera.name) + '_%s.jpg']
+                      '-qscale:v', str(self.__jpeg_compression),
+                      file_path]
         sp.run(ffmpeg_cmd)
+
+        logger.log("Saved snapshot {} to {}", file_name, file_path)
+
+        return snapshot_dir, file_name

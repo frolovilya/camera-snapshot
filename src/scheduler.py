@@ -1,5 +1,6 @@
 import sched
 import time
+from src import logger
 
 
 class Scheduler:
@@ -10,7 +11,7 @@ class Scheduler:
 
     def __wrap_repeated_task(self, task_func, period):
         def repeated_task():
-            print("Executing task at", int(time.time()))
+            logger.log("Executing task at {}", int(time.time()))
             task_func()
             self.schedule_task(task_func, period)
 
@@ -18,7 +19,7 @@ class Scheduler:
 
     def schedule_task(self, task_func, period=3600):
         execution_time = self.__next_timestamp(time.time(), period)
-        print("Scheduled next execution time", execution_time)
+        logger.log("Scheduled next execution time {}", execution_time)
         self.s.enterabs(execution_time, 1, self.__wrap_repeated_task(task_func, period))
 
     def start(self):

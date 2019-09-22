@@ -1,6 +1,8 @@
-ffmpeg_bin: 'ffmpeg'
-snapshots_dir: '/app/snapshots'
 time_period: 10
+
+ffmpeg:
+  bin: 'ffmpeg'
+  jpeg_compression: 5
 
 cameras:
 - !!python/object:webcam.Camera
@@ -9,3 +11,8 @@ cameras:
 - !!python/object:webcam.Camera
   name: '23'
   uri: 'http://video03.setl.ru/status_2/tracks-v1/mono.m3u8'
+
+s3:
+  bucket_name: '(secret)'
+  access_key: '(secret)'
+  secret_key: '(secret)'
