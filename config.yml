@@ -1,6 +1,6 @@
-ffmpeg_bin: '/Volumes/HDD/Users/ilyaf/Dev/tools/ffmpeg'
+ffmpeg_bin: 'ffmpeg'
 snapshots_dir: 'snapshots'
-time_period: 5
+time_period: 10
 
 cameras:
 - !!python/object:webcam.Camera
