@@ -1,5 +1,4 @@
-import webcam
-import scheduler
+from src import webcam, scheduler
 import yaml
 import pprint
 
