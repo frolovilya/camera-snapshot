@@ -1,0 +1,11 @@
+ffmpeg_bin: '/Volumes/HDD/Users/ilyaf/Dev/tools/ffmpeg'
+snapshots_dir: 'snapshots'
+time_period: 5
+
+cameras:
+- !!python/object:webcam.Camera
+  name: '12'
+  uri: 'http://video03.setl.ru/status_1/tracks-v1/mono.m3u8'
+- !!python/object:webcam.Camera
+  name: '23'
+  uri: 'http://video03.setl.ru/status_2/tracks-v1/mono.m3u8'
