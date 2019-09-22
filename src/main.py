@@ -21,7 +21,7 @@ s = scheduler.Scheduler()
 def take_snapshots_task():
     for camera in props['cameras']:
         file_dir, file_name = snap.take_video_snapshot(camera)
-        #s3.upload(file_dir + "/" + file_name, camera.name + "/" + file_name)
+        s3.upload(file_dir + "/" + file_name, camera.name + "/" + file_name)
 
 
 s.schedule_task(take_snapshots_task, props['time_period'])
