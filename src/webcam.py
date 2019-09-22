@@ -19,7 +19,7 @@ class Camera:
 class CameraSnapshot:
     def __init__(self, ffmpeg_bin, jpeg_compression=5):
         self.__ffmpeg_bin = ffmpeg_bin
-        self.__jpeg_compression = jpeg_compression
+        self.__jpeg_compression = int(jpeg_compression)
 
     def take_video_snapshot(self, camera, snapshot_dir=tempfile.gettempdir()):
         """
