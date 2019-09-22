@@ -1,5 +1,5 @@
 ffmpeg_bin: 'ffmpeg'
-snapshots_dir: 'snapshots'
+snapshots_dir: '/app/snapshots'
 time_period: 10
 
 cameras:
