@@ -4,6 +4,9 @@ ffmpeg:
   bin: 'ffmpeg'
   jpeg_compression: 5
 
+logger:
+  timezone: 'Europe/Moscow'
+
 cameras:
 - !!python/object:webcam.Camera
   name: '12'
