@@ -33,4 +33,7 @@ class Scheduler:
         self._scheduler.enterabs(execution_time, 1, self._wrap_repeated_task(task_func, int(period)))
 
     def start(self):
-        self._scheduler.run()
+        try:
+            self._scheduler.run()
+        except KeyboardInterrupt as e:
+            logger.log("Stopped scheduler {}", e)
