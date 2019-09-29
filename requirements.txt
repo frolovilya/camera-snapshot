@@ -1,2 +1,3 @@
-boto3==1.9.233
-PyYAML==5.1.2
+pytz
+boto3
+PyYAML
