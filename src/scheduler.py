@@ -9,13 +9,13 @@ import logger
 class Scheduler:
     _scheduler = sched.scheduler(time.time, time.sleep)
 
-    def _next_timestamp(self, current_timestamp, abs_period):
+    def _next_timestamp(self, current_timestamp: float, abs_period: int) -> float:
         return int(current_timestamp - current_timestamp % abs_period) + abs_period
 
-    def _readable_timestamp(self, timestamp):
+    def _readable_timestamp(self, timestamp: float) -> str:
         return datetime.datetime.fromtimestamp(timestamp, tz=env.get_timezone()).strftime("%Y-%m-%d %H:%M:%S")
 
-    def _wrap_repeated_task(self, task_func, period):
+    def _wrap_repeated_task(self, task_func, period: int):
         def repeated_task():
             logger.log("---------- Executing task ({})", int(time.time()))
             try:
@@ -26,11 +26,11 @@ class Scheduler:
 
         return repeated_task
 
-    def schedule_task(self, task_func, period=3600):
-        execution_time = self._next_timestamp(time.time(), int(period))
+    def schedule_task(self, task_func, period: int = 3600):
+        execution_time = self._next_timestamp(time.time(), period)
         logger.log("Scheduled next execution time {} ({})",
                    self._readable_timestamp(execution_time), execution_time)
-        self._scheduler.enterabs(execution_time, 1, self._wrap_repeated_task(task_func, int(period)))
+        self._scheduler.enterabs(execution_time, 1, self._wrap_repeated_task(task_func, period))
 
     def start(self):
         try:

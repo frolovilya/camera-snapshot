@@ -6,7 +6,7 @@ import logger
 
 
 class Camera:
-    def __init__(self, name, uri):
+    def __init__(self, name: str, uri: str):
         self.name = name
         self.uri = uri
 
@@ -18,16 +18,16 @@ class Camera:
 
 
 class CameraException(Exception):
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
 
 
 class CameraSnapshot:
-    def __init__(self, ffmpeg_bin, jpeg_compression=5):
+    def __init__(self, ffmpeg_bin: str, jpeg_compression: int = 5):
         self._ffmpeg_bin = ffmpeg_bin
-        self._jpeg_compression = int(jpeg_compression)
+        self._jpeg_compression = jpeg_compression
 
-    def take_video_snapshot(self, camera, snapshot_dir=tempfile.gettempdir()):
+    def take_video_snapshot(self, camera: Camera, snapshot_dir: str = tempfile.gettempdir()) -> (str, float):
         """
         Take snapshot image from camera.
 

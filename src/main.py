@@ -9,7 +9,7 @@ import storage
 import webcam
 
 
-def get_target_file_path(camera, timestamp):
+def get_target_file_path(camera: webcam.Camera, timestamp: float):
     def add_leading_zero(x):
         return str(x) if len(str(x)) > 1 else "0" + str(x)
 
@@ -28,7 +28,7 @@ def run():
 
     snap = webcam.CameraSnapshot(
         ffmpeg_bin=props['ffmpeg']['bin'],
-        jpeg_compression=props['ffmpeg']['jpeg_compression']
+        jpeg_compression=int(props['ffmpeg']['jpeg_compression'])
     )
 
     s3_client = storage.S3Client(
@@ -48,7 +48,7 @@ def run():
             except (webcam.CameraException, storage.StorageException) as e:
                 logger.error("{}", e.message)
 
-    task_scheduler.schedule_task(take_snapshots_task, props['time_period'])
+    task_scheduler.schedule_task(take_snapshots_task, int(props['time_period']))
     task_scheduler.start()
 
 

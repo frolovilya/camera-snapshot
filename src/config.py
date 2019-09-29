@@ -4,7 +4,7 @@ import os
 import logger
 
 
-def _override_with_env_variables(props, prefix=""):
+def _override_with_env_variables(props: dict, prefix=""):
     """
     Override properties with system environment variables.
     For example
@@ -31,7 +31,7 @@ def _override_with_env_variables(props, prefix=""):
                 props[key] = override
 
 
-def get_properties(yaml_file):
+def get_properties(yaml_file: str) -> dict:
     with open(yaml_file) as yaml_file_handler:
         config = yaml.load(yaml_file_handler, yaml.Loader)
     _override_with_env_variables(config)
