@@ -31,6 +31,7 @@ def _override_with_env_variables(props, prefix=""):
 
 
 def get_properties(yaml_file):
-    config = yaml.load(open(yaml_file), yaml.Loader)
+    with open(yaml_file) as yaml_file_handler:
+        config = yaml.load(yaml_file_handler, yaml.Loader)
     _override_with_env_variables(config)
     return config
