@@ -18,8 +18,8 @@ class S3Client:
 
     def upload(self, source_file_path, target_file_path):
         try:
-            logger.log("Uploading {} to S3 {}...", source_file_path, target_file_path)
+            logger.log("Uploading {} to S3 {}/{}...", source_file_path, self.bucket_name, target_file_path)
             self.__s3.upload_file(source_file_path, self.bucket_name, target_file_path)
-            logger.log("Uploaded {}", target_file_path)
+            logger.log("Uploaded {}/{}", self.bucket_name, target_file_path)
         except boto3.exceptions.Boto3Error as e:
             raise StorageException("Error uploading file to S3: ", e)

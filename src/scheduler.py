@@ -15,8 +15,11 @@ class Scheduler:
 
     def _wrap_repeated_task(self, task_func, period):
         def repeated_task():
-            logger.log("Executing task ({})", int(time.time()))
-            task_func()
+            logger.log("---------- Executing task ({})", int(time.time()))
+            try:
+                task_func()
+            except Exception as e:
+                logger.error("Error while executing task: {}", str(e))
             self.schedule_task(task_func, period)
 
         return repeated_task

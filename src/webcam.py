@@ -34,9 +34,10 @@ class CameraSnapshot:
         :param snapshot_dir: snapshot directory to save file to
         :return: tuple: snapshot folder, snapshot file name
         """
-        logger.log("Taking snapshot for camera '{}' ({})", camera.name, int(time.time()))
+        timestamp = int(time.time())
+        logger.log("Taking snapshot for camera '{}' ({})", camera.name, timestamp)
 
-        file_name = camera.name + '_' + str(int(time.time())) + '.jpg'
+        file_name = camera.name + '_' + str(timestamp) + '.jpg'
         file_path = snapshot_dir + "/" + file_name
 
         ffmpeg_cmd = [self._ffmpeg_bin,
@@ -49,8 +50,8 @@ class CameraSnapshot:
         response = sp.run(ffmpeg_cmd)
 
         if response.returncode == 0:
-            logger.log("Saved snapshot {} to {}", file_name, file_path)
+            logger.log("Saved snapshot {}", file_path)
         else:
             raise CameraException("Failed to take snapshot. FFMPEG returned non-zero code.")
 
-        return snapshot_dir, file_name
+        return file_path, timestamp

@@ -1,5 +1,6 @@
 from src import webcam, scheduler, storage, config, logger
 import pprint
+import datetime
 
 props = config.get_properties("config.yml")
 
@@ -20,11 +21,22 @@ s3_client = storage.S3Client(
 task_scheduler = scheduler.Scheduler()
 
 
+def get_target_file_path(camera, timestamp):
+    def add_leading_zero(x):
+        return str(x) if len(str(x)) > 1 else "0" + str(x)
+
+    date = datetime.datetime.fromtimestamp(timestamp, tz=logger.get_timezone())
+    return "{}/{}/{}/{}/{}_{}.jpg".format(camera.name,
+                                          date.year, add_leading_zero(date.month), add_leading_zero(date.day),
+                                          camera.name, timestamp)
+
+
 def take_snapshots_task():
     for camera in props['cameras']:
         try:
-            file_dir, file_name = snap.take_video_snapshot(camera)
-            s3_client.upload(file_dir + "/" + file_name, camera.name + "/" + file_name)
+            source_file_path, timestamp = snap.take_video_snapshot(camera)
+            target_file_path = get_target_file_path(camera, timestamp)
+            s3_client.upload(source_file_path, target_file_path)
         except (webcam.CameraException, storage.StorageException) as e:
             logger.error("{}", e.message)
 
