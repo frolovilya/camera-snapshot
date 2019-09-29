@@ -1,7 +1,9 @@
+import datetime
 import sched
 import time
-import datetime
-from src import logger, env
+
+import env
+import logger
 
 
 class Scheduler:

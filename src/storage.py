@@ -1,7 +1,7 @@
 import boto3
 import boto3.exceptions
 
-from src import logger
+import logger
 
 
 class StorageException(Exception):

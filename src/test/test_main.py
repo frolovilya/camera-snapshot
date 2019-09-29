@@ -1,9 +1,12 @@
-import unittest
 import datetime
-from src import webcam, main, env
+import unittest
+
+import env
+import main
+import webcam
 
 
-class MainTest(unittest.TestCase):
+class TestMain(unittest.TestCase):
 
     def test_target_file_path_generation(self):
         camera = webcam.Camera("123", "any")

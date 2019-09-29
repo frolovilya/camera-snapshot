@@ -1,6 +1,7 @@
 import yaml
 import os
-from src import logger
+
+import logger
 
 
 def _override_with_env_variables(props, prefix=""):

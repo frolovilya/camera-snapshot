@@ -1,11 +1,12 @@
 import unittest
 import os
-from src import config
+
+import config
 
 
-class ConfigTest(unittest.TestCase):
+class TestConfig(unittest.TestCase):
 
-    config_file_path = "../../config.yml"
+    config_file_path = "config.yml"
 
     _secret_placeholder = "(secret)"
 

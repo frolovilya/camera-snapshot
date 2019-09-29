@@ -1,8 +1,9 @@
 import unittest
-from src import scheduler
+
+import scheduler
 
 
-class SchedulerTest(unittest.TestCase):
+class TestScheduler(unittest.TestCase):
 
     def setUp(self):
         self._scheduler = scheduler.Scheduler()

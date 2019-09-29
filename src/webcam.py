@@ -1,7 +1,8 @@
 import subprocess as sp
 import time
 import tempfile
-from src import logger
+
+import logger
 
 
 class Camera:

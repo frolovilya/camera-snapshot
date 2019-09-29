@@ -1,6 +1,12 @@
-from src import webcam, scheduler, storage, config, logger, env
-import pprint
 import datetime
+import pprint
+
+import config
+import env
+import logger
+import scheduler
+import storage
+import webcam
 
 
 def get_target_file_path(camera, timestamp):
