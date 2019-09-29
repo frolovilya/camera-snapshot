@@ -1,4 +1,4 @@
-from src import webcam, scheduler, storage, config, logger
+from src import webcam, scheduler, storage, config, logger, env
 import pprint
 import datetime
 
@@ -7,7 +7,7 @@ def get_target_file_path(camera, timestamp):
     def add_leading_zero(x):
         return str(x) if len(str(x)) > 1 else "0" + str(x)
 
-    date = datetime.datetime.fromtimestamp(timestamp, tz=logger.get_timezone())
+    date = datetime.datetime.fromtimestamp(timestamp, tz=env.get_timezone())
     return "{}/{}/{}/{}/{}_{}.jpg".format(camera.name,
                                           date.year, add_leading_zero(date.month), add_leading_zero(date.day),
                                           camera.name, timestamp)
@@ -16,7 +16,8 @@ def get_target_file_path(camera, timestamp):
 def run():
     props = config.get_properties("config.yml")
 
-    logger.timezone_name = props['logger']['timezone']
+    env.timezone_name = props['env']['timezone']
+
     logger.log("Loaded properties: \n{}", pprint.pformat(props))
 
     snap = webcam.CameraSnapshot(

@@ -1,7 +1,7 @@
 import sched
 import time
 import datetime
-from src import logger
+from src import logger, env
 
 
 class Scheduler:
@@ -11,7 +11,7 @@ class Scheduler:
         return int(current_timestamp - current_timestamp % abs_period) + abs_period
 
     def _readable_timestamp(self, timestamp):
-        return datetime.datetime.fromtimestamp(timestamp, tz=logger.get_timezone()).strftime("%Y-%m-%d %H:%M:%S")
+        return datetime.datetime.fromtimestamp(timestamp, tz=env.get_timezone()).strftime("%Y-%m-%d %H:%M:%S")
 
     def _wrap_repeated_task(self, task_func, period):
         def repeated_task():

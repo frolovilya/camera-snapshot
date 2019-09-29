@@ -4,7 +4,7 @@ ffmpeg:
   bin: 'ffmpeg'
   jpeg_compression: 5
 
-logger:
+env:
   timezone: 'Europe/Moscow'
 
 cameras:
