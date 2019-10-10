@@ -1,5 +1,6 @@
 import datetime
 import pprint
+import multiprocessing as mp
 
 import config
 import env
@@ -19,38 +20,56 @@ def get_target_file_path(camera: webcam.Camera, timestamp: float):
                                           camera.name, timestamp)
 
 
-def run():
-    props = config.get_properties("config.yml")
+class Main:
+    def __init__(self):
+        self.props = config.get_properties("config.yml")
 
-    env.timezone_name = props['env']['timezone']
+        env.timezone_name = self.props['env']['timezone']
 
-    logger.log("Loaded properties: \n{}", pprint.pformat(props))
+        logger.start()
+        logger.log("Loaded properties: \n{}", pprint.pformat(self.props))
 
-    snap = webcam.CameraSnapshot(
-        ffmpeg_bin=props['ffmpeg']['bin'],
-        jpeg_compression=int(props['ffmpeg']['jpeg_compression'])
-    )
+        self.snap = webcam.CameraSnapshot(
+            ffmpeg_bin=self.props['ffmpeg']['bin'],
+            jpeg_compression=int(self.props['ffmpeg']['jpeg_compression']),
+            timeout_sec=int(self.props['ffmpeg']['timeout_sec'])
+        )
 
-    s3_client = storage.S3Client(
-        access_key=props['s3']['access_key'],
-        secret_key=props['s3']['secret_key'],
-        bucket_name=props['s3']['bucket_name']
-    )
+        self.task_scheduler = scheduler.Scheduler()
 
-    task_scheduler = scheduler.Scheduler()
+    def _get_s3_client(self):
+        # S3 client is not pickleable thus can't be shared between multiple processes
+        return storage.S3Client(
+            access_key=self.props['s3']['access_key'],
+            secret_key=self.props['s3']['secret_key'],
+            bucket_name=self.props['s3']['bucket_name']
+        )
 
-    def take_snapshots_task():
-        for camera in props['cameras']:
-            try:
-                source_file_path, timestamp = snap.take_video_snapshot(camera)
-                target_file_path = get_target_file_path(camera, timestamp)
-                s3_client.upload(source_file_path, target_file_path)
-            except (webcam.CameraException, storage.StorageException) as e:
-                logger.error("{}", e.message)
+    def _take_camera_snapshot(self, camera: webcam.Camera):
+        try:
+            source_file_path, timestamp = self.snap.take_video_snapshot(camera)
+            target_file_path = get_target_file_path(camera, timestamp)
+            self._get_s3_client().upload(source_file_path, target_file_path)
 
-    task_scheduler.schedule_task(take_snapshots_task, int(props['time_period']))
-    task_scheduler.start()
+        except (webcam.CameraException, storage.StorageException) as e:
+            logger.error("{}", e.message)
+
+    def _async_take_snapshots_task(self):
+        workers = mp.Pool(int(self.props['workers']))
+
+        for camera in self.props['cameras']:
+            workers.apply_async(self._take_camera_snapshot, args=(camera,))
+
+        workers.close()
+        try:
+            workers.join()
+        except KeyboardInterrupt:
+            workers.terminate()
+
+    def run(self):
+        self.task_scheduler.schedule_task(self._async_take_snapshots_task, int(self.props['time_period']))
+        self.task_scheduler.start()
 
 
 if __name__ == '__main__':
-    run()
+    Main().run()

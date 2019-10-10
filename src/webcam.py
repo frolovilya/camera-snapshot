@@ -23,9 +23,10 @@ class CameraException(Exception):
 
 
 class CameraSnapshot:
-    def __init__(self, ffmpeg_bin: str, jpeg_compression: int = 5):
+    def __init__(self, ffmpeg_bin: str, jpeg_compression: int = 5, timeout_sec: int = 10):
         self._ffmpeg_bin = ffmpeg_bin
         self._jpeg_compression = jpeg_compression
+        self._timeout_sec = timeout_sec
 
     def take_video_snapshot(self, camera: Camera, snapshot_dir: str = tempfile.gettempdir()) -> (str, float):
         """
@@ -48,11 +49,15 @@ class CameraSnapshot:
                       '-vframes', '1',
                       '-qscale:v', str(self._jpeg_compression),
                       file_path]
-        response = sp.run(ffmpeg_cmd)
+        try:
+            response = sp.run(ffmpeg_cmd, timeout=self._timeout_sec)
 
-        if response.returncode == 0:
-            logger.log("Saved snapshot {}", file_path)
-        else:
-            raise CameraException("Failed to take snapshot. FFMPEG returned non-zero code.")
+            if response.returncode == 0:
+                logger.log("Saved snapshot {}", file_path)
+            else:
+                raise CameraException("Failed to take snapshot. FFMPEG returned non-zero code.")
+
+        except sp.TimeoutExpired:
+            logger.log("Timeout occurred while capturing {}", camera.name)
 
         return file_path, timestamp
