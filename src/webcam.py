@@ -6,7 +6,7 @@ import logger
 
 
 class Camera:
-    def __init__(self, name, uri):
+    def __init__(self, name: str, uri: str):
         self.name = name
         self.uri = uri
 
@@ -18,25 +18,26 @@ class Camera:
 
 
 class CameraException(Exception):
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
 
 
 class CameraSnapshot:
-    def __init__(self, ffmpeg_bin, jpeg_compression=5):
+    def __init__(self, ffmpeg_bin: str, jpeg_compression: int = 5, timeout_sec: int = 300):
         self._ffmpeg_bin = ffmpeg_bin
-        self._jpeg_compression = int(jpeg_compression)
+        self._jpeg_compression = jpeg_compression
+        self._timeout_sec = timeout_sec
 
-    def take_video_snapshot(self, camera, snapshot_dir=tempfile.gettempdir()):
+    def take_video_snapshot(self, camera: Camera, snapshot_dir: str = tempfile.gettempdir()) -> (str, float):
         """
         Take snapshot image from camera.
 
         :param camera: Camera object
-        :param snapshot_dir: snapshot directory to save file to
-        :return: tuple: snapshot folder, snapshot file name
+        :param snapshot_dir: snapshot directory to save file to, tempdir by feault
+        :return: (snapshot folder, snapshot file name)
         """
         timestamp = int(time.time())
-        logger.log("Taking snapshot for camera '{}' ({})", camera.name, timestamp)
+        logger.log("Taking snapshot for camera {} ({})", camera.name, timestamp)
 
         file_name = camera.name + '_' + str(timestamp) + '.jpg'
         file_path = snapshot_dir + "/" + file_name
@@ -48,11 +49,19 @@ class CameraSnapshot:
                       '-vframes', '1',
                       '-qscale:v', str(self._jpeg_compression),
                       file_path]
-        response = sp.run(ffmpeg_cmd)
+        try:
+            response = sp.run(ffmpeg_cmd, timeout=self._timeout_sec)
 
-        if response.returncode == 0:
-            logger.log("Saved snapshot {}", file_path)
-        else:
-            raise CameraException("Failed to take snapshot. FFMPEG returned non-zero code.")
+            if response.returncode == 0:
+                logger.log("Saved snapshot {} ({})", camera.name, file_path)
+            else:
+                raise CameraException("Failed to take snapshot for {}. "
+                                      "FFMPEG returned non-zero code.".format(camera.name))
+
+        except KeyboardInterrupt as e:
+            logger.log("Interrupted FFMPEG while capturing {}", camera.name)
+            raise e
+        except sp.TimeoutExpired:
+            raise CameraException("Timeout occurred while capturing {}".format(camera.name))
 
         return file_path, timestamp

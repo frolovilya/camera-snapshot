@@ -1,13 +1,25 @@
-time_period: 10
+# Snapshot capturing period in seconds
+time_period_sec: 3600
+# Number of worker processes to capture snapshots
+workers: 2
 
 ffmpeg:
+  # FFMPEG executable path
   bin: 'ffmpeg'
+  # Snapshot jpeg compression, effective range 2-31, 2 - best quality, 31 - worst
   jpeg_compression: 5
+  # Snapshot capturing timeout in seconds
+  timeout_sec: 300
 
 env:
+  # Used for logging and timestamp to date resolution
   timezone: 'Europe/Moscow'
 
 cameras:
+  # Configuration format:
+  # - !!python/object:webcam.Camera
+  #   name: camera name
+  #   uri: camera uri
 - !!python/object:webcam.Camera
   name: '23'
   uri: 'http://video03.setl.ru/status_1/index.m3u8'
@@ -21,7 +33,9 @@ cameras:
   name: '1_56'
   uri: 'http://video03.setl.ru/status_3/index.m3u8'
 
+# Amazon S3 properties
 s3:
+  # All images will be saved to this bucket
   bucket_name: '(secret)'
   access_key: '(secret)'
   secret_key: '(secret)'
