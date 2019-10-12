@@ -70,7 +70,7 @@ class Main:
             workers.terminate()
 
     def run(self):
-        self.task_scheduler.schedule_task(self._async_save_snapshots_task, int(self.props['time_period']))
+        self.task_scheduler.schedule_task(self._async_save_snapshots_task, int(self.props['time_period_sec']))
         self.task_scheduler.start()
 
 
