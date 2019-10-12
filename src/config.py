@@ -32,6 +32,12 @@ def _override_with_env_variables(props: dict, prefix=""):
 
 
 def get_properties(yaml_file: str) -> dict:
+    """
+    Read properties from Yaml file.
+
+    :param yaml_file: properties file path
+    :return: properties dictionary
+    """
     with open(yaml_file) as yaml_file_handler:
         config = yaml.load(yaml_file_handler, yaml.Loader)
     _override_with_env_variables(config)

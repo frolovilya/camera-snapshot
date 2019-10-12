@@ -33,11 +33,11 @@ class CameraSnapshot:
         Take snapshot image from camera.
 
         :param camera: Camera object
-        :param snapshot_dir: snapshot directory to save file to
-        :return: tuple: snapshot folder, snapshot file name
+        :param snapshot_dir: snapshot directory to save file to, tempdir by feault
+        :return: (snapshot folder, snapshot file name)
         """
         timestamp = int(time.time())
-        logger.log("Taking snapshot for camera '{}' ({})", camera.name, timestamp)
+        logger.log("Taking snapshot for camera {} ({})", camera.name, timestamp)
 
         file_name = camera.name + '_' + str(timestamp) + '.jpg'
         file_path = snapshot_dir + "/" + file_name
@@ -55,9 +55,10 @@ class CameraSnapshot:
             if response.returncode == 0:
                 logger.log("Saved snapshot {}", file_path)
             else:
-                raise CameraException("Failed to take snapshot. FFMPEG returned non-zero code.")
+                raise CameraException("Failed to take snapshot for {}. "
+                                      "FFMPEG returned non-zero code.".format(camera.name))
 
         except sp.TimeoutExpired:
-            logger.log("Timeout occurred while capturing {}", camera.name)
+            raise CameraException("Timeout occurred while capturing {}".format(camera.name))
 
         return file_path, timestamp

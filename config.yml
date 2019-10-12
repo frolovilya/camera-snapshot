@@ -1,10 +1,10 @@
 time_period: 10
-workers: 3
+workers: 2
 
 ffmpeg:
   bin: 'ffmpeg'
   jpeg_compression: 5
-  timeout_sec: 10
+  timeout_sec: 30
 
 env:
   timezone: 'Europe/Moscow'

@@ -37,7 +37,7 @@ class Main:
 
         self.task_scheduler = scheduler.Scheduler()
 
-    def _get_s3_client(self):
+    def _init_s3_client(self):
         # S3 client is not pickleable thus can't be shared between multiple processes
         return storage.S3Client(
             access_key=self.props['s3']['access_key'],
@@ -45,20 +45,23 @@ class Main:
             bucket_name=self.props['s3']['bucket_name']
         )
 
-    def _take_camera_snapshot(self, camera: webcam.Camera):
+    def _save_camera_snapshot(self, camera: webcam.Camera):
+        """
+        Take camera snapshot and upload to Amazon S3.
+        """
         try:
             source_file_path, timestamp = self.snap.take_video_snapshot(camera)
             target_file_path = get_target_file_path(camera, timestamp)
-            self._get_s3_client().upload(source_file_path, target_file_path)
+            self._init_s3_client().upload(source_file_path, target_file_path)
 
-        except (webcam.CameraException, storage.StorageException) as e:
+        except (webcam.CameraException, storage.S3Exception) as e:
             logger.error("{}", e.message)
 
-    def _async_take_snapshots_task(self):
+    def _async_save_snapshots_task(self):
         workers = mp.Pool(int(self.props['workers']))
 
         for camera in self.props['cameras']:
-            workers.apply_async(self._take_camera_snapshot, args=(camera,))
+            workers.apply_async(self._save_camera_snapshot, args=(camera,))
 
         workers.close()
         try:
@@ -67,7 +70,7 @@ class Main:
             workers.terminate()
 
     def run(self):
-        self.task_scheduler.schedule_task(self._async_take_snapshots_task, int(self.props['time_period']))
+        self.task_scheduler.schedule_task(self._async_save_snapshots_task, int(self.props['time_period']))
         self.task_scheduler.start()
 
 
