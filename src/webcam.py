@@ -53,7 +53,7 @@ class CameraSnapshot:
             response = sp.run(ffmpeg_cmd, timeout=self._timeout_sec)
 
             if response.returncode == 0:
-                logger.log("Saved snapshot {}", file_path)
+                logger.log("Saved snapshot {} ({})", camera.name, file_path)
             else:
                 raise CameraException("Failed to take snapshot for {}. "
                                       "FFMPEG returned non-zero code.".format(camera.name))
