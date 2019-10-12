@@ -69,6 +69,7 @@ class Main:
 
             workers.close()
             workers.join()
+            logger.log("Finished tasks")
 
         except KeyboardInterrupt as e:
             workers.terminate()
