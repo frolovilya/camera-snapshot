@@ -47,7 +47,7 @@ class Main:
 
     def _save_camera_snapshot(self, camera: webcam.Camera):
         """
-        Take camera snapshot and upload to Amazon S3.
+        Take camera snapshot and upload to S3.
         """
         try:
             source_file_path, timestamp = self.snap.take_video_snapshot(camera)
@@ -58,6 +58,9 @@ class Main:
             logger.error("{}", e.message)
 
     def _async_save_snapshots_task(self):
+        """
+        Async take camera snapshots in separate worker processes and upload to S3.
+        """
         workers = mp.Pool(int(self.props['workers']))
 
         try:

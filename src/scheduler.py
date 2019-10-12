@@ -74,4 +74,5 @@ class Scheduler:
         try:
             self._scheduler.run()
         except KeyboardInterrupt as e:
+            # all KeyboardInterrupt exceptions are raised up to this block
             logger.log("Stopped scheduler {}", e)
