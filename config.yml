@@ -9,7 +9,7 @@ ffmpeg:
   # Snapshot jpeg compression, effective range 2-31, 2 - best quality, 31 - worst
   jpeg_compression: 5
   # Snapshot capturing timeout in seconds
-  timeout_sec: 30
+  timeout_sec: 300
 
 env:
   # Used for logging and timestamp to date resolution
