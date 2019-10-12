@@ -1,5 +1,5 @@
 # Snapshot capturing period in seconds
-time_period_sec: 10
+time_period_sec: 3600
 # Number of worker processes to capture snapshots
 workers: 2
 

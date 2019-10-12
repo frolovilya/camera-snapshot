@@ -23,7 +23,7 @@ class CameraException(Exception):
 
 
 class CameraSnapshot:
-    def __init__(self, ffmpeg_bin: str, jpeg_compression: int = 5, timeout_sec: int = 10):
+    def __init__(self, ffmpeg_bin: str, jpeg_compression: int = 5, timeout_sec: int = 300):
         self._ffmpeg_bin = ffmpeg_bin
         self._jpeg_compression = jpeg_compression
         self._timeout_sec = timeout_sec
