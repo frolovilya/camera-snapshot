@@ -44,8 +44,12 @@ class Scheduler:
             logger.log("---------- Executing task ({})", int(time.time()))
             try:
                 task_func()
+            except KeyboardInterrupt as e:
+                logger.log("Interrupted task execution")
+                raise e
             except Exception as e:
                 logger.error("Error while executing task: {}", str(e))
+
             self.schedule_task(task_func, period)
 
         return repeated_task

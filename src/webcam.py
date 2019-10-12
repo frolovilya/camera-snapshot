@@ -58,6 +58,9 @@ class CameraSnapshot:
                 raise CameraException("Failed to take snapshot for {}. "
                                       "FFMPEG returned non-zero code.".format(camera.name))
 
+        except KeyboardInterrupt as e:
+            logger.log("Interrupted FFMPEG while capturing {}", camera.name)
+            raise e
         except sp.TimeoutExpired:
             raise CameraException("Timeout occurred while capturing {}".format(camera.name))
 

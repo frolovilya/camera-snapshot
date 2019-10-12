@@ -60,14 +60,17 @@ class Main:
     def _async_save_snapshots_task(self):
         workers = mp.Pool(int(self.props['workers']))
 
-        for camera in self.props['cameras']:
-            workers.apply_async(self._save_camera_snapshot, args=(camera,))
-
-        workers.close()
         try:
+            for camera in self.props['cameras']:
+                workers.apply_async(self._save_camera_snapshot, args=(camera,))
+
+            workers.close()
             workers.join()
-        except KeyboardInterrupt:
+
+        except KeyboardInterrupt as e:
             workers.terminate()
+            logger.log("Interrupted workers pool")
+            raise e
 
     def run(self):
         self.task_scheduler.schedule_task(self._async_save_snapshots_task, int(self.props['time_period_sec']))

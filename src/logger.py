@@ -54,5 +54,5 @@ def start():
         except Exception:
             pass
 
-    _logging_thread = threading.Thread(target=log_messages)
+    _logging_thread = threading.Thread(target=log_messages, daemon=True)
     _logging_thread.start()
