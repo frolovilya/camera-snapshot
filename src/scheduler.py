@@ -1,13 +1,17 @@
 import datetime
 import sched
 import time
+import multiprocessing as mp
 
 import env
 import logger
 
 
 class Scheduler:
-    _scheduler = sched.scheduler(time.time, time.sleep)
+    def __init__(self, workers_count: int):
+        self._scheduler = sched.scheduler(time.time, time.sleep)
+        self._tasks = []
+        self._workers_count = workers_count
 
     def _next_timestamp(self, current_timestamp: float, abs_period: int) -> float:
         """
@@ -32,46 +36,55 @@ class Scheduler:
         """
         return datetime.datetime.fromtimestamp(timestamp, tz=env.get_timezone()).strftime("%Y-%m-%d %H:%M:%S")
 
-    def _wrap_repeated_task(self, task_func, period: int):
+    def _repeat_tasks(self, period: int):
         """
         Execute task_func and schedule next execution.
 
-        :param task_func: task function to execute
         :param period: execution repeat period in seconds
         :return: wrapped task_func
         """
-        def repeated_task():
-            logger.log("---------- Executing task ({})", int(time.time()))
+        logger.log("---------- Executing task ({})", int(time.time()))
+        try:
+            workers = mp.Pool(self._workers_count)
             try:
-                task_func()
+                for task_func, task_args in self._tasks:
+                    workers.apply_async(task_func, args=task_args)
+
+                workers.close()
+                workers.join()
+                logger.log("Finished tasks")
             except KeyboardInterrupt as e:
+                workers.terminate()
                 logger.log("Interrupted task execution")
                 raise e
-            except Exception as e:
-                logger.error("Error while executing task: {}", str(e))
+        except KeyboardInterrupt as e:
+            raise e
+        except Exception as e:
+            logger.error("Error while executing task: {}", str(e))
 
-            self.schedule_task(task_func, period)
+        self._schedule_next_invocation(period)
 
-        return repeated_task
-
-    def schedule_task(self, task_func, period: int = 3600):
+    def _schedule_next_invocation(self, period: int):
         """
-        Schedule task_func to be executed every period.
+        Schedule tasks to be executed every specified time period.
         Calls time.sleep() between executions.
 
-        :param task_func: task function to execute
         :param period: execution repeat period in seconds
         """
         execution_time = self._next_timestamp(time.time(), period)
         logger.log("Scheduled next execution time {} ({})",
                    self._readable_timestamp(execution_time), execution_time)
-        self._scheduler.enterabs(execution_time, 1, self._wrap_repeated_task(task_func, period))
+        self._scheduler.enterabs(execution_time, 1, self._repeat_tasks, argument=(period,))
 
-    def start(self):
+    def add_task(self, task_func, *task_args):
+        self._tasks.append((task_func, task_args))
+
+    def start(self, period: int):
         """
-        Start executing scheduled tasks.
+        Start executing scheduled tasks at every time period.
         """
         try:
+            self._schedule_next_invocation(period)
             self._scheduler.run()
         except KeyboardInterrupt as e:
             # all KeyboardInterrupt exceptions are raised up to this block
