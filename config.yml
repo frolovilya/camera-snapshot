@@ -15,23 +15,24 @@ env:
   # Used for logging and timestamp to date resolution
   timezone: 'Europe/Moscow'
 
+# Inline cameras configuration
 cameras:
   # Configuration format:
   # - !!python/object:webcam.Camera
   #   name: camera name
   #   uri: camera uri
-- !!python/object:webcam.Camera
-  name: '23'
-  uri: 'http://video03.setl.ru/status_1/index.m3u8'
-- !!python/object:webcam.Camera
-  name: '12'
-  uri: 'http://video03.setl.ru/status_4/index.m3u8'
-- !!python/object:webcam.Camera
-  name: '1_34'
-  uri: 'http://video03.setl.ru/status_2/index.m3u8'
-- !!python/object:webcam.Camera
-  name: '1_56'
-  uri: 'http://video03.setl.ru/status_3/index.m3u8'
+
+# Load cameras configuration from m3u8 file.
+# If at least one camera is configured inline, then this property is ignored.
+# Not recommended unless you have control over playlist m3u8 file generation.
+#
+# Supported format:
+#  #EXTM3U
+#  #EXT-X-SESSION-DATA:DATA-ID="camera.name",VALUE="My Camera 1"
+#  #EXT-X-STREAM-INF:...
+#  http://video.url/camera.m3u8
+#
+cameras_playlist: 'cameras.m3u8'
 
 # Amazon S3 properties
 s3:
