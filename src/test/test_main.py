@@ -13,7 +13,7 @@ class TestMain(unittest.TestCase):
 
     def _test_target_file_path_generation(self, expected_date: str, timestamp: float):
         excepted_path = "{}/{}/{}_{}.jpg".format(self._camera.name, expected_date, self._camera.name, timestamp)
-        self.assertEqual(excepted_path, main.get_target_file_path(self._camera, timestamp))
+        self.assertEqual(excepted_path, main._get_target_file_path(self._camera, timestamp))
 
     def test_today(self):
         date = datetime.datetime(year=2019, month=1, day=1,

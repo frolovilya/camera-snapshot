@@ -10,7 +10,7 @@ import env
 _logger_queue = mp.Manager().Queue()
 
 
-def log(message, *args, is_error=False):
+def log(message: str, *args, is_error=False):
     """
     Log message.
     Messages will be printed in the main process.
@@ -28,7 +28,7 @@ def log(message, *args, is_error=False):
         _direct_print(log_message, is_error)
 
 
-def error(message, *args):
+def error(message: str, *args):
     """
     Log error to stderr.
     Messages will be printed in the main process.
@@ -39,7 +39,7 @@ def error(message, *args):
     log(message, *args, is_error=True)
 
 
-def _direct_print(message, is_error):
+def _direct_print(message: str, is_error: bool):
     print(message, file=sys.stdout if not is_error else sys.stderr, flush=True)
 
 

@@ -6,7 +6,7 @@ import scheduler
 class TestScheduler(unittest.TestCase):
 
     def setUp(self):
-        self._scheduler = scheduler.Scheduler()
+        self._scheduler = scheduler.Scheduler(1)
 
     def test_timer(self):
         self.assertEqual(self._scheduler._next_timestamp(0, 3600), 3600)

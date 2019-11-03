@@ -34,7 +34,7 @@ class CameraSnapshot:
 
         :param camera: Camera object
         :param snapshot_dir: snapshot directory to save file to, tempdir by feault
-        :return: (snapshot folder, snapshot file name)
+        :return: (snapshot file path, timestamp)
         """
         timestamp = int(time.time())
         logger.log("Taking snapshot for camera {} ({})", camera.name, timestamp)
