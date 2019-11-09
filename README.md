@@ -29,6 +29,6 @@ export S3_SECRET_KEY="SOMESECRETKEY"
 ```
 Same applies for Config Vars if using Heroku.
 
-## In a picture
+## In the picture
 
 ![How it works](https://user-images.githubusercontent.com/271293/68529537-c7858d80-0310-11ea-8353-7bd745a23dc9.jpg)
