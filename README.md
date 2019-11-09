@@ -1,5 +1,7 @@
 # camera-snapshot
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/frolovilya/camera-snapshot.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/frolovilya/camera-snapshot/context:python)
+
 This service takes web camera snapshots via FFmpeg at a specified time period and uploads them to S3 bucket.
 
 
