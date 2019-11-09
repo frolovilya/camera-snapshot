@@ -1,7 +1,5 @@
 # camera-snapshot
 
-Schedule web camera snapshot capturing and save image to S3. 
-
 This service takes web camera snapshots via FFmpeg at a specified time period and uploads them to S3 bucket.
 
 
