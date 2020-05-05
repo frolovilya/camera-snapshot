@@ -14,7 +14,7 @@ def _get_target_file_path(camera: webcam.Camera, timestamp: float) -> str:
         return str(x) if len(str(x)) > 1 else "0" + str(x)
 
     date = datetime.datetime.fromtimestamp(timestamp, tz=env.get_timezone())
-    return "{}/{}/{}/{}/{}_{}.jpg".format(camera.name,
+    return "{}/{}/{}/{}/{}_{}.jpg".format(camera.folder,
                                           date.year, add_leading_zero(date.month), add_leading_zero(date.day),
                                           camera.name, timestamp)
 

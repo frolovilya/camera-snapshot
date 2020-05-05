@@ -7,11 +7,13 @@ import logger
 
 class Camera:
     def __init__(self, name: str, uri: str):
-        self.name = name
+        name_parts = name.split("/")
+        self.folder = name_parts[0]
+        self.name = name_parts[0] if len(name_parts) == 1 else name_parts[1]
         self.uri = uri
 
     def __str__(self):
-        return "{'name': '" + self.name + "', 'uri': '" + self.uri + "'}"
+        return "{'folder': '" + self.folder + "', 'name': '" + self.name + "', 'uri': '" + self.uri + "'}"
 
     def __repr__(self):
         return self.__str__()
